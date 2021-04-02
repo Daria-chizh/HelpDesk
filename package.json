@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/Daria-chizh/HelpDesk#readme",
   "dependencies": {
+    "@koa/cors": "^3.1.0",
     "koa": "^2.13.1",
     "koa-body": "^4.2.0",
     "koa-bodyparser": "^4.3.0",

@@ -1,9 +1,11 @@
 const http = require('http');
 const Koa = require('koa');
+const cors = require('@koa/cors');
 const bodyParser = require('koa-bodyparser');
 
 const app = new Koa();
 
+app.use(cors());
 app.use(bodyParser());
 
 let freshId = 4;
@@ -14,21 +16,21 @@ const tickets = [
     name: '123',
     description: '444',
     status: false,
-    created: Date.now(),
+    created: new Date('2020-01-01 15:01:12'),
   },
   {
     id: 2,
     name: '3333',
     description: 'zzzz',
     status: false,
-    created: Date.now(),
+    created: new Date('2020-02-03 15:01:12'),
   },
   {
     id: 3,
     name: '787878',
     description: 'ffff',
     status: false,
-    created: Date.now(),
+    created: new Date('2021-01-01 12:01:12'),
   },
 ];
 
@@ -52,9 +54,9 @@ function getTicketById(id) {
 function createTicket(ticket) {
   tickets.push({
     id: freshId,
-    created: Date.now(),
+    created: new Date(),
     name: ticket.name,
-    status: ticket.status,
+    status: false,
     description: ticket.description,
   });
 
@@ -63,11 +65,17 @@ function createTicket(ticket) {
 
 function updateTicket(id, params) {
   const numericId = parseInt(id, 10);
-  const ticketToUpdate = tickets.find((ticket) => ticket.id === numericId);
-  for (const propToUpdate of Object.keys(params)) {
-    ticketToUpdate[propToUpdate] = params[propToUpdate];
+  const ticket = tickets.find((element) => element.id === numericId);
+  const { name, status, description } = params;
+  if (name !== undefined) {
+    ticket.name = name;
   }
-  return ticketToUpdate;
+  if (description !== undefined) {
+    ticket.description = description;
+  }
+  if (status !== undefined) {
+    ticket.status = status === 'true' || status === true;
+  }
 }
 
 function deleteTicket(id) {
@@ -103,4 +111,4 @@ app.use(async (ctx) => {
   }
 });
 
-http.createServer(app.callback()).listen(process.env.PORT || 5555);
+http.createServer(app.callback()).listen(process.env.PORT || 5555, () => console.log('Server is working'));
